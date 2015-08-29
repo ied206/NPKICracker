@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="NPKICracker" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/NPKICracker" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="-f NPKI/signPri.key -m 10 -M 10 -c NPKI/charset.txt" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/NPKICracker" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="-f NPKI/signPri.key -m 10 -M 10 -c NPKI/charset.txt" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="64Debug">
+				<Option output="bin/64Debug/NPKICracker" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/64Debug/" />
+				<Option type="1" />
+				<Option compiler="gnu_gcc_compiler_64" />
+				<Option parameters="-f NPKI/signPri.key -m 10 -M 10 -c NPKI/charset.txt" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="64Release">
+				<Option output="bin/64Release/NPKICracker" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/64Release/" />
+				<Option type="1" />
+				<Option compiler="gnu_gcc_compiler_64" />
+				<Option parameters="-f NPKI/signPri.key -m 10 -M 10 -c NPKI/charset.txt" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-march=corei7-avx" />
+			<Add option="-Wall" />
+			<Add option="--std=c99 -fopenmp" />
+		</Compiler>
+		<Linker>
+			<Add option="-fopenmp" />
+		</Linker>
+		<Unit filename="BasicIO.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="BasicIO.h" />
+		<Unit filename="ErrorHandle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ErrorHandle.h" />
+		<Unit filename="Hash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Hash.h" />
+		<Unit filename="Main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="NPKICrack.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="NPKICrack.h" />
+		<Unit filename="Seed.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Seed.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
