@@ -1,8 +1,8 @@
-ï»¿#include <stdint.h>
+#include <stdint.h>
 
 /* Modified from KISA"s SEED 128 Source Code
  * https://seed.kisa.or.kr/iwt/ko/sup/EgovSeedInfo.do
- * í•œêµ­ì¸í„°ë„·ì§„í¥ì›ì€ SEED 128/256ë¥¼ ì´ìš©í•œ ì œí’ˆ ìƒì‚° ë° íŒë§¤ì™€ ê´€ë ¨ëœ ì§€ì ì¬ì‚°ê¶Œì— ëŒ€í•˜ì—¬ ì‚¬ìš©ë£Œë¥¼ ìš”êµ¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+ * ÇÑ±¹ÀÎÅÍ³İÁøÈï¿øÀº SEED 128/256¸¦ ÀÌ¿ëÇÑ Á¦Ç° »ı»ê ¹× ÆÇ¸Å¿Í °ü·ÃµÈ ÁöÀûÀç»ê±Ç¿¡ ´ëÇÏ¿© »ç¿ë·á¸¦ ¿ä±¸ÇÏÁö ¾Ê½À´Ï´Ù.
 */
 
 
@@ -311,7 +311,7 @@ void JV_SEED_CBC128_Decrypt_Serial(const uint8_t *in, uint8_t *out, const size_t
 		mid.dword[3] = L1;
 
 	// CBC XOR
-		if (i == 0) // ë§¨ ì²˜ìŒì—ëŠ” iv ì‚¬ìš©
+		if (i == 0) // ¸Ç Ã³À½¿¡´Â iv »ç¿ë
 		{
 			for (uint8_t x = 0; x < 16 && x < length; x++)
 				out[x] = mid.byte[x] ^ iv[x];
@@ -377,4 +377,20 @@ void JV_SEED_CBC128_Decrypt_OneBlock(const uint8_t *in, uint8_t *out, const uint
 // CBC - XOR
 	for (size_t n = 0; n < 16; n++)
 		out[n] = mid.byte[n] ^ iv[n];
+}
+
+// Calculate all blocks at once -> Serial Logic
+void JV_SEED_CBC128_Decrypt_NoBranch(const uint8_t *virt_in, uint8_t *out, const size_t length, const uint32_t *K)
+{
+	uint8_t mid[16];
+
+	for (size_t i = 0; i < length; i += 16)
+    {
+		// SEED Decipher
+		JV_SeedDecrypt((uint8_t*) virt_in + i + 16, mid, (uint32_t*) K);
+
+		// CBC XOR
+		for (uint32_t x = 0; x < 16 && x < length; x++)
+			out[i + x] = mid[x] ^ virt_in[i + x];
+    }
 }

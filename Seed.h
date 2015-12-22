@@ -1,4 +1,4 @@
-﻿#ifndef SEED_INCLUDED
+#ifndef SEED_INCLUDED
 #define SEED_INCLUDED
 
 // Simplified SEED Decrypt code from KISA_SEED
@@ -110,6 +110,6 @@ void JV_SeedRoundKey(uint32_t *pdwRoundKey,	uint8_t *pbUserKey);
 //void JV_SeedDecrypt(uint8_t *pbData, uint8_t *pbPlain, uint32_t *pdwRoundKey);
 void JV_SEED_CBC128_Decrypt_Serial(const uint8_t *in, uint8_t *out, const size_t length, const uint32_t *K, const uint8_t iv[16]);
 void JV_SEED_CBC128_Decrypt_OneBlock(const uint8_t *in, uint8_t *out, const uint32_t *K, const uint8_t iv[16]);
-
+void JV_SEED_CBC128_Decrypt_NoBranch(const uint8_t *virt_in, uint8_t *out, const size_t length, const uint32_t *K);
 
 #endif // SEED_INCLUDED

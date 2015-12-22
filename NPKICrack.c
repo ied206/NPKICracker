@@ -1,4 +1,4 @@
-ï»¿#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -12,25 +12,25 @@
 #include "ErrorHandle.h"
 #include "NPKICrack.h"
 
-// ì´ static ì „ì—­ë³€ìˆ˜ë“¤ì€ í•œë²ˆ ê°’ì„ ì“°ë©´ ë³€ê²½ë˜ì§€ ì•ŠëŠ”ë‹¤.
+// ÀÌ static Àü¿ªº¯¼öµéÀº ÇÑ¹ø °ªÀ» ¾²¸é º¯°æµÇÁö ¾Ê´Â´Ù.
 static uint8_t charset_dic[0x100] = {0};
 static uint32_t charset_len;
 static uint64_t max_cursor[MAX_PASSWORD+1] = {0};
 
-// í•œ ë²ˆ í˜¸ì¶œí•˜ë©´ ë‚´ë¶€ì ìœ¼ë¡œ ì“°ë ˆë“œë¥¼ ë§Œë“¤ì–´ ì „ë¶€ ë‹¤ ëŒë ¤ë³¸ë‹¤
+// ÇÑ ¹ø È£ÃâÇÏ¸é ³»ºÎÀûÀ¸·Î ¾²·¹µå¸¦ ¸¸µé¾î ÀüºÎ ´Ù µ¹·Áº»´Ù
 void BruteForceIterate (NPKIPrivateKey *pkey, NPKIBruteForce *bforce)
 {
-	// ì‹œì‘í•˜ëŠ” ìœ„ì¹˜. -i ì˜µì…˜ ë•Œë¬¸ì— ë„£ìŒ
+	// ½ÃÀÛÇÏ´Â À§Ä¡. -i ¿É¼Ç ¶§¹®¿¡ ³ÖÀ½
 	uint64_t base_cursor = bforce->pw_cursor;
-	// PRINT_INTERVAL ì´ˆë§ˆë‹¤ í•œë²ˆ í‘œì‹œí•´ì•¼ í•˜ê¸° ë•Œë¬¸ì— ë„£ìŒ
+	// PRINT_INTERVAL ÃÊ¸¶´Ù ÇÑ¹ø Ç¥½ÃÇØ¾ß ÇÏ±â ¶§¹®¿¡ ³ÖÀ½
 	time_t prev_time = time(NULL) - bforce->print_interval;
 
 	char** passwords = NULL;
 	NPKIPrivateKey** ikeys = NULL;
-	// omp í•¨ìˆ˜ë“¤ì„ #pragma omp ë°–ì—ì„œ í˜¸ì¶œí•  ê²½ìš°, ì»´íŒŒì¼ëŸ¬ì— ë”°ë¼ ì œëŒ€ë¡œ ëœ ê°’ì´ ë°˜í™˜ë˜ì§€ ì•ŠëŠ” ê²½ìš°ê°€ ìˆë‹¤.
+	// omp ÇÔ¼öµéÀ» #pragma omp ¹Û¿¡¼­ È£ÃâÇÒ °æ¿ì, ÄÄÆÄÀÏ·¯¿¡ µû¶ó Á¦´ë·Î µÈ °ªÀÌ ¹İÈ¯µÇÁö ¾Ê´Â °æ¿ì°¡ ÀÖ´Ù.
 	#pragma omp barrier
 	{
-		// NPKIPrivateKey, passwordëŠ” ê° ì“°ë ˆë“œë§ˆë‹¤ ë³„ë„ë¡œ ë„£ì–´ì¤Œ.
+		// NPKIPrivateKey, password´Â °¢ ¾²·¹µå¸¶´Ù º°µµ·Î ³Ö¾îÁÜ.
 		passwords = (char**) malloc(omp_get_max_threads() * sizeof(char*));
 		ikeys = (NPKIPrivateKey**) malloc(omp_get_max_threads() * sizeof(NPKIPrivateKey*));
 		for (uint32_t i = 0; i < omp_get_max_threads(); i++)
@@ -42,7 +42,7 @@ void BruteForceIterate (NPKIPrivateKey *pkey, NPKIBruteForce *bforce)
 	}
 
 //	for (uint64_t i = base_cursor; i < max_cursor[MAX_PASSWORD]; i++)
-	// OpenMP ì“°ë ˆë“œ ìƒì„±
+	// OpenMP ¾²·¹µå »ı¼º
 	#pragma omp parallel
 	{
 		while (bforce->pw_cursor < max_cursor[MAX_PASSWORD])
@@ -52,14 +52,14 @@ void BruteForceIterate (NPKIPrivateKey *pkey, NPKIBruteForce *bforce)
 			PasswordGenerate(bforce, password);
 			NPKIDecrypt(ikey, password);
 
-			// Thread 0ì¼ë•Œ, PRINT_INTERVALì´ˆë§ˆë‹¤ í˜„í™© ì¶œë ¥
+			// Thread 0ÀÏ¶§, PRINT_INTERVALÃÊ¸¶´Ù ÇöÈ² Ãâ·Â
 			#ifndef _DEBUG
 			if (!omp_get_thread_num() && time(NULL) - prev_time >= bforce->print_interval)
 			#endif
 			{
-				// PRIu64 ë¥¼ ì“°ëŠ” ì´ìœ  -> uint64_tëŠ” ìœˆë„ìš°ì—ì„œ %I64u, ë¦¬ëˆ…ìŠ¤ì—ì„œ %lluë¼ ì„œë¡œ ë‹¤ë¦„
-					uint32_t elasped = time(NULL) - bforce->starttime + 1; // 1 ì•ˆ ë¶™ì´ë©´ DIV/0 ë°œìƒ
-					uint64_t remains = ((max_cursor[MAX_PASSWORD] - bforce->pw_cursor) / (bforce->pw_cursor - base_cursor + 1) * elasped); // ì‹œê°„ = ê±°ë¦¬ / ì†ë„
+				// PRIu64 ¸¦ ¾²´Â ÀÌÀ¯ -> uint64_t´Â À©µµ¿ì¿¡¼­ %I64u, ¸®´ª½º¿¡¼­ %llu¶ó ¼­·Î ´Ù¸§
+					uint32_t elasped = time(NULL) - bforce->starttime + 1; // 1 ¾È ºÙÀÌ¸é DIV/0 ¹ß»ı
+					uint64_t remains = ((max_cursor[MAX_PASSWORD] - bforce->pw_cursor) / (bforce->pw_cursor - base_cursor + 1) * elasped); // ½Ã°£ = °Å¸® / ¼Óµµ
 					printf(	"Now Calculating Password \'%s\'\n"
 							"  Job Done  : %2"PRIu64".%02"PRIu64"%%\n"
 							"  Job Speed : %"PRId64" key/sec\n"
@@ -77,29 +77,29 @@ void BruteForceIterate (NPKIPrivateKey *pkey, NPKIBruteForce *bforce)
 				#endif
 			}
 
-	// ê³µì¸ì¸ì¦ì„œ ë¹„ë°€ë²ˆí˜¸ë¥¼ ì°¾ì•˜ë‹¤ë©´ passwordë¥¼ ê¸°ë¡í•˜ê³  while loop íƒˆì¶œ
+	// °øÀÎÀÎÁõ¼­ ºñ¹Ğ¹øÈ£¸¦ Ã£¾Ò´Ù¸é password¸¦ ±â·ÏÇÏ°í while loop Å»Ãâ
 			if(IsPKCS5PaddingOK(pkey->plain, pkey->crypto_len))
 			{
-				// ì‚¬ì‹¤ ì´ ifë¶„ì€ ë‹¨ í•œ ìŠ¤ë ˆë“œë§Œ ë“¤ì–´ì˜¬ ìˆ˜ ìˆê¸°ì— criticalì„ ê¼­ ì•ˆ ì¨ë„ ëœë‹¤.
+				// »ç½Ç ÀÌ if¹®Àº ´Ü ÇÑ ½º·¹µå¸¸ µé¾î¿Ã ¼ö ÀÖ±â¿¡ criticalÀ» ²À ¾È ½áµµ µÈ´Ù.
 				#pragma omp critical
 				{
-					// ì°¾ì•„ë‚¸ ë¹„ë°€ë²ˆí˜¸ë¥¼ bforceì— ë³µì‚¬í•˜ê³  (mainì— ì „ë‹¬í•´ì•¼ í•œë‹¤)
+					// Ã£¾Æ³½ ºñ¹Ğ¹øÈ£¸¦ bforce¿¡ º¹»çÇÏ°í (main¿¡ Àü´ŞÇØ¾ß ÇÑ´Ù)
 					strncpy(bforce->password, password, MAX_PASSWORD);
 					bforce->password[MAX_PASSWORD-1] = '\0';
-					// mainì— ì°¾ì•˜ë‹¤ê³  ì•Œë¦°ë‹¤
+					// main¿¡ Ã£¾Ò´Ù°í ¾Ë¸°´Ù
 					bforce->decrypt = TRUE;
-					// While ë°˜ë³µë¬¸ ì¡°ê±´ì„ ê¹¨ì„œ ë£¨í”„ íƒˆì¶œ
+					// While ¹İº¹¹® Á¶°ÇÀ» ±ú¼­ ·çÇÁ Å»Ãâ
 					bforce->pw_cursor = max_cursor[MAX_PASSWORD];
 				}
 			}
 
-		// atomicì´ criticalë³´ë‹¤ ë” ë¹ ë¦„
+		// atomicÀÌ criticalº¸´Ù ´õ ºü¸§
 			#pragma omp atomic
 			bforce->pw_cursor++;
 		}
 	}
 
-	// ë™ì í• ë‹¹ëœ êµ¬ì¡°ì²´/ë°°ì—´ í•´ì œ
+	// µ¿ÀûÇÒ´çµÈ ±¸Á¶Ã¼/¹è¿­ ÇØÁ¦
 	for (uint32_t i = 0; i < omp_get_max_threads(); i++)
 	{
 		free(passwords[i]);
@@ -107,19 +107,19 @@ void BruteForceIterate (NPKIPrivateKey *pkey, NPKIBruteForce *bforce)
 	}
 	free(passwords);
 	free(ikeys);
-	// Use After Free ë°©ì§€
+	// Use After Free ¹æÁö
 	passwords = NULL;
 	ikeys = NULL;
 }
 
 void NPKIDecrypt (NPKIPrivateKey *pkey, const char* password)
 {
-// ë³€ìˆ˜ ì„ ì–¸ ë° ì´ˆê¸°í™”
+// º¯¼ö ¼±¾ğ ¹× ÃÊ±âÈ­
     uint8_t dkey[20] = {0}, div[20] = {0}, buf[20] = {0}, iv[16] = {0}, seedkey[20] = {0}; // dkey, div, buf is temporary
 	uint32_t roundkey[32] = {0};
 
 // Get SEED Key
-	// ë¹„ë°€ë²ˆí˜¸ ê¸¸ì´ëŠ” ìµœëŒ€ 64ìë¦¬ê¹Œì§€ ì œí•œë˜ì–´ ìˆë‹¤.
+	// ºñ¹Ğ¹øÈ£ ±æÀÌ´Â ÃÖ´ë 64ÀÚ¸®±îÁö Á¦ÇÑµÇ¾î ÀÖ´Ù.
     JV_PBKDF1(dkey, (uint8_t*)password, strlen(password), pkey->salt, sizeof(pkey->salt), pkey->itercount);
     memcpy(seedkey, dkey, 16);
 // Get SEED IV
@@ -135,10 +135,21 @@ void NPKIDecrypt (NPKIPrivateKey *pkey, const char* password)
 #endif
 
 	JV_SeedRoundKey(roundkey, seedkey);
-	JV_SEED_CBC128_Decrypt_Serial(pkey->crypto, pkey->plain, pkey->crypto_len, roundkey, iv);
+
+	// JV_SEED_CBC128_Decrypt_Serial(pkey->crypto, pkey->plain, pkey->crypto_len, roundkey, iv);
+
+	uint8_t* virt_in = (uint8_t*) malloc(pkey->crypto_len + 16); // len of in + iv
+	for (uint32_t x = 0; x < 16; x++)
+		virt_in[x] = iv[x];
+	for (uint32_t x = 0; x < pkey->crypto_len; x++)
+	{
+		virt_in[x + 16] = pkey->crypto[x];
+	}
+	JV_SEED_CBC128_Decrypt_NoBranch(virt_in, pkey->plain, pkey->crypto_len, roundkey);
+    free(virt_in);
 /*
 	const uint32_t looplen = pkey->crypto_len;
-// ì—¬ê¸°ì— OpenMPë¥¼ ì“°ë©´ ì“°ë ˆë“œ ìƒì„±/í•´ì œë¥¼ ë„ˆë¬´ ìì£¼ í•´ì„œ ì˜¤ë²„í—¤ë“œë¡œ ì¸í•´ ëŠë ¤ì§
+// ¿©±â¿¡ OpenMP¸¦ ¾²¸é ¾²·¹µå »ı¼º/ÇØÁ¦¸¦ ³Ê¹« ÀÚÁÖ ÇØ¼­ ¿À¹öÇìµå·Î ÀÎÇØ ´À·ÁÁü
 // #pragma omp parallel for
 	for (uint32_t i = 0; i < looplen; i += SeedBlockSize)
 		JV_SEED_CBC128_Decrypt_OneBlock(pkey->crypto + i, pkey->plain + i, roundkey, i ? pkey->crypto + (i-SeedBlockSize) : iv);
@@ -213,9 +224,9 @@ int NPK_ReadRaw (NPKIPrivateKey *pkey, const char* PrivateKeyPath)
 
 void NPK_Parse (NPKIPrivateKey *pkey)
 {
-// salt <- PrivateKeyBuf, rawkey[20]-[27] // 21-28ë°”ì´íŠ¸
+// salt <- PrivateKeyBuf, rawkey[20]-[27] // 21-28¹ÙÀÌÆ®
 	memcpy((void*) (pkey->salt), (void*) (pkey->rawkey+20), 8);
-// itercount <- rawkey[30]-[31] // 31-32ë°”ì´íŠ¸
+// itercount <- rawkey[30]-[31] // 31-32¹ÙÀÌÆ®
 	pkey->itercount = (pkey->rawkey[30] << 8) + pkey->rawkey[31];
 
 #ifdef _DEBUG
@@ -224,7 +235,7 @@ void NPK_Parse (NPKIPrivateKey *pkey)
 	printf(	"\n== Itercount : %d ==\n", pkey->itercount);
 #endif
 
-// crypted <- rawkey[36]-[End] // 37ë°”ì´íŠ¸ë¶€í„°
+// crypted <- rawkey[36]-[End] // 37¹ÙÀÌÆ®ºÎÅÍ
 	pkey->crypto_len = pkey->rawkey_len - 36;
 	pkey->crypto = (uint8_t *)malloc(pkey->crypto_len * sizeof(uint8_t));
 	pkey->plain = (uint8_t *)malloc(pkey->crypto_len * sizeof(uint8_t));
@@ -267,27 +278,27 @@ int NBF_ReadCharset (NPKIBruteForce *bforce)
     FILE *fp = NULL;
 	long cslen = 0;
 
-// íŒŒì¼ ê¸¸ì´
+// ÆÄÀÏ ±æÀÌ
 	cslen = ReadFileSize(bforce->pw_charset_path);
-	if (MAX_PW_CHARSET < cslen) // ê·¸ëŒ€ë¡œ ë‘ë©´ Overflow ë°œìƒ -> Abort
+	if (MAX_PW_CHARSET < cslen) // ±×´ë·Î µÎ¸é Overflow ¹ß»ı -> Abort
 		JV_ErrorHandle(JVERR_PW_CHARSET_TOO_LONG);
 
-// ë‚´ìš©ì„ ì½ëŠ”ë‹¤.
+// ³»¿ëÀ» ÀĞ´Â´Ù.
     fp = fopen(bforce->pw_charset_path, "rt");
 	for (long i = 0; i < cslen; i++)
 		bforce->pw_charset[i] = fgetc(fp);
 	fclose(fp);
 
-// ì¤‘ë³µë˜ëŠ” ë¬¸ìê°€ ì—†ëŠ”ì§€ ê²€ì‚¬
+// Áßº¹µÇ´Â ¹®ÀÚ°¡ ¾ø´ÂÁö °Ë»ç
 	for (long i = 0; i < cslen; i++)
 		charset_dic[(uint8_t) bforce->pw_charset[i]]++;
 
 	for (long i = 0; i < cslen; i++)
 	{
 		if (2 <= charset_dic[i])
-			return FALSE; // ê²€ì¦ ì‹¤íŒ¨
+			return FALSE; // °ËÁõ ½ÇÆĞ
 	}
-// ê¸¸ì´ ì €ì¥
+// ±æÀÌ ÀúÀå
 	charset_len = strlen(bforce->pw_charset);
 
 	return TRUE;
@@ -302,7 +313,7 @@ int NBF_ValidateInitPW (NPKIBruteForce *bforce)
 		JV_ErrorHandle(JVERR_PW_INITIAL_TOO_LONG);
     for (size_t i = 0; i < strlen(bforce->pw_init); i++)
 	{
-        if (charset_dic[(uint8_t) bforce->pw_init[i]] == 0) // charsetì— ì—†ëŠ”ê²Œ pw_initì— ìˆë‹¤
+        if (charset_dic[(uint8_t) bforce->pw_init[i]] == 0) // charset¿¡ ¾ø´Â°Ô pw_init¿¡ ÀÖ´Ù
 			return FALSE;
 	}
 
@@ -339,11 +350,11 @@ void NBF_Ready (NPKIBruteForce *bforce)
 void GetMaxCursor(NPKIBruteForce *bforce)
 {
 	for (uint32_t i = bforce->pw_min_len; i <= bforce->pw_max_len; i++)
-	{ // iëŠ” ë¹„ë²ˆê¸¸ì´
+	{ // i´Â ºñ¹ø±æÀÌ
 		max_cursor[i] = 1;
-		for (uint32_t d = 0; d < i; d++) // dëŠ” ìë¦¿ìˆ˜
+		for (uint32_t d = 0; d < i; d++) // d´Â ÀÚ¸´¼ö
 			max_cursor[i] += NBF_GetCharsetNumber(bforce, bforce->pw_charset[charset_len-1]) * ipow(charset_len, d);
-		// ì—¬ê¸°ëŠ” ì „ì²´ì˜ ì»¤ì„œ ê¸¸ì´
+		// ¿©±â´Â ÀüÃ¼ÀÇ Ä¿¼­ ±æÀÌ
 		max_cursor[MAX_PASSWORD] += max_cursor[i];
 #ifdef _DEBUG
 		printf("max_cursor for len %2u : %"PRIu64"\n", i, max_cursor[i]);
