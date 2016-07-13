@@ -1,0 +1,8 @@
+res/
+obj/
+bin/
+NPKI/
+Makefile
+*.depend
+*.layout
+*.exe
