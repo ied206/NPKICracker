@@ -224,5 +224,6 @@ void JV_Help ()
 			"-p  : Use custom print interval\n"
 			"        Usage : -p <PrintInterval>\n"
 			"-cl : Use OpenCL\n"
-			"        If OpenCL is enabled, cpu multithreading will be disabled.\n");
+			"        If OpenCL is enabled, cpu multithreading will be disabled.\n"
+      "        OpenCL functionality is not available now.\n");
 }
