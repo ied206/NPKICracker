@@ -54,7 +54,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-march=corei7-avx" />
+			<Add option="-march=core2" />
 			<Add option="-Wall" />
 			<Add option="--std=c99 -fopenmp" />
 		</Compiler>

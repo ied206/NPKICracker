@@ -28,17 +28,20 @@ void BruteForceIterate (NPKIPrivateKey *pkey, NPKIBruteForce *bforce)
 	char** passwords = NULL;
 	NPKIPrivateKey** ikeys = NULL;
 	// omp 함수들을 #pragma omp 밖에서 호출할 경우, 컴파일러에 따라 제대로 된 값이 반환되지 않는 경우가 있다.
-	#pragma omp
+	#pragma omp parallel
 	{
-		// NPKIPrivateKey, password는 각 쓰레드마다 별도로 넣어줌.
-		passwords = (char**) malloc(omp_get_max_threads() * sizeof(char*));
-		ikeys = (NPKIPrivateKey**) malloc(omp_get_max_threads() * sizeof(NPKIPrivateKey*));
-		for (uint32_t i = 0; i < omp_get_max_threads(); i++)
-		{
-			passwords[i] = (char*) malloc(MAX_PASSWORD * sizeof(char));
-			ikeys[i] = (NPKIPrivateKey*) malloc(sizeof(NPKIPrivateKey));
-			NPK_Duplicate(ikeys[i], pkey);
-		}
+        if (omp_get_thread_num() == 0)
+        {
+            // NPKIPrivateKey, password는 각 쓰레드마다 별도로 넣어줌.
+            passwords = (char**) malloc(omp_get_max_threads() * sizeof(char*));
+            ikeys = (NPKIPrivateKey**) malloc(omp_get_max_threads() * sizeof(NPKIPrivateKey*));
+            for (uint32_t i = 0; i < omp_get_max_threads(); i++)
+            {
+                passwords[i] = (char*) malloc(MAX_PASSWORD * sizeof(char));
+                ikeys[i] = (NPKIPrivateKey*) malloc(sizeof(NPKIPrivateKey));
+                NPK_Duplicate(ikeys[i], pkey);
+            }
+        }
 	}
 
 //	for (uint64_t i = base_cursor; i < max_cursor[MAX_PASSWORD]; i++)
