@@ -81,8 +81,8 @@ void JV_ErrorHandle(int code)
 				"Undefined Error\n";
 		break;
 	}
-    printf("ErrorCode : %d\n%s", code, msg);
-    exit(code);
+	printf("ErrorCode : %d\n%s", code, msg);
+	exit(code);
 }
 
 void JV_WarnHandle(int code)
@@ -110,5 +110,5 @@ void JV_WarnHandle(int code)
 		msg = "WarnMessage : UNDEFINDED WARNING\nUndefined Warning\n";
 		break;
 	}
-    printf("WarnCode : %d\n%s", code, msg);
+	printf("WarnCode : %d\n%s", code, msg);
 }

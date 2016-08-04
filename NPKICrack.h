@@ -13,10 +13,10 @@ struct npki_private_key
 	uint8_t *rawkey;
 	long rawkey_len;
 	uint8_t salt[8]; // dkey, div, buf is temporary
-    uint16_t itercount;
-    uint8_t *crypto;
-    long crypto_len;
-    uint8_t *plain;
+	uint16_t itercount;
+	uint8_t *crypto;
+	long crypto_len;
+	uint8_t *plain;
 };
 typedef struct npki_private_key NPKIPrivateKey;
 
@@ -26,14 +26,14 @@ struct npki_brute_force
 	char* pw_charset_path;	// Password Charset
 	char* pw_init;			// Initial Password
 	char password[MAX_PASSWORD];		// Password
-    char pw_charset[MAX_PW_CHARSET];	// Password Charset
+	char pw_charset[MAX_PW_CHARSET];	// Password Charset
 	uint32_t pw_min_len;	// Password Minimum Length
-    uint32_t pw_max_len;	// Password Maximum Length
-    uint64_t pw_cursor;	// Now, which n'th pw is to iterate?
-    uint64_t decrypt;
-    uint32_t use_opencl;
-    uint32_t print_interval;
-    time_t	starttime;
+	uint32_t pw_max_len;	// Password Maximum Length
+	uint64_t pw_cursor;	// Now, which n'th pw is to iterate?
+	uint64_t decrypt;
+	uint32_t use_opencl;
+	uint32_t print_interval;
+	time_t	starttime;
 };
 typedef struct npki_brute_force NPKIBruteForce;
 

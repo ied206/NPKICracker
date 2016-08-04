@@ -10,7 +10,7 @@ int scanfile (const char name[]) // 파일의 존재 여부 검사
 	FILE *fp;
 	int is_file_exist = TRUE;
 
-    fp = fopen(name, "r");
+	fp = fopen(name, "r");
 	if (fp == NULL)
 		is_file_exist = FALSE;
 	else
@@ -32,7 +32,7 @@ uint8_t BytePrefix(uint64_t sizelen)
 {
 	uint8_t whatbyte;
 
-    if (sizelen < BIN_KILOBYTE) // Byte
+	if (sizelen < BIN_KILOBYTE) // Byte
 		whatbyte = ENUM_BYTE;
 	else if (sizelen < BIN_MEGABYTE) // KB
 		whatbyte = ENUM_KILOBYTE;
@@ -59,7 +59,8 @@ int CompileYear () // 컴파일한 년도
 }
 
 int CompileMonth ()
-{ // 컴파일한 월 표시
+{
+	// 컴파일한 월 표시
 	const char macro[16] = __DATE__;
 	const char smonth[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	int i = 0;
@@ -76,7 +77,8 @@ int CompileMonth ()
 }
 
 int CompileDate ()
-{ // 컴파일한 일 표시
+{
+	// 컴파일한 일 표시
 	const char macro[16] = __DATE__;
 	char stmp[4] = {0}; // 전체 0으로 초기화
 
@@ -93,7 +95,8 @@ long ReadFileSize(const char* filename)
 	long filesize;
 
 	if (!(scanfile(filename)))
-	{ // 파일이 존재하지 않다면
+	{
+		// 파일이 존재하지 않다면
 		fprintf(stderr, "Error in ReadFileSize()\n%s not exists!\n", filename);
 		return -1;
 	}

@@ -10,7 +10,8 @@
 # define SHA_BIG_ENDIAN
 #endif
 
-typedef struct sha1nfo {
+typedef struct sha1nfo
+{
 
 	uint32_t buffer[BLOCK_LENGTH/4];
 	uint32_t state[HASH_LENGTH/4];

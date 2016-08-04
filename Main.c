@@ -15,8 +15,8 @@ int main (int argc, char* argv[])
 {
 // This file is saved with PKCS#8 file format, and the key is encrypted with PKCS#5's PBKDF1
 // 변수 선언 및 초기화
-    NPKIPrivateKey pkey; 	// NPKI Private Key Struct
-    NPKIBruteForce bforce;	// NPKI Brute Force Struct
+	NPKIPrivateKey pkey; 	// NPKI Private Key Struct
+	NPKIBruteForce bforce;	// NPKI Brute Force Struct
 
 	// 찾았다면 TRUE로 SET
 	int arg_file	= FALSE;
@@ -26,7 +26,7 @@ int main (int argc, char* argv[])
 	int arg_initial	= FALSE;
 
 	NPK_Init(&pkey);
-    NBF_Init(&bforce);
+	NBF_Init(&bforce);
 
 // Welcome Print
 	printf(	"Joveler and joonji's NPKI Craker for Inc0gntio 2015\n"
@@ -44,9 +44,11 @@ int main (int argc, char* argv[])
 
 	// Search for arguments
 	for (int i = 1; i < argc; i++)
-	{ // 이 루프를 돌며 -f, -m, -M, -c, -i, -p, -cl을 찾는다.
+	{
+		// 이 루프를 돌며 -f, -m, -M, -c, -i, -p, -cl을 찾는다.
 		if (strcmp(argv[i], "-f") == 0)
-		{  // -f signPri.key, 파일 존재
+		{
+			// -f signPri.key, 파일 존재
 			if (i+1 != argc && scanfile(argv[i+1]))
 			{
 				arg_file = TRUE;
@@ -56,7 +58,8 @@ int main (int argc, char* argv[])
 				JV_ErrorHandle(JVERR_PRIVATE_KEY_NOT_EXIST);
 		}
 		else if (strcmp(argv[i], "-m") == 0)
-		{ // -m 10
+		{
+			// -m 10
 			if (i+1 != argc)
 			{
 				if (atoi(argv[i+1]) < 1)
@@ -68,7 +71,8 @@ int main (int argc, char* argv[])
 				JV_ErrorHandle(JVERR_PW_MIN_LENGTH_NOT_EXIST);
 		}
 		else if (strcmp(argv[i], "-M") == 0)
-		{ // -m 15
+		{
+			// -m 15
 			if (i+1 != argc && 0 < atoi(argv[i+1]))
 			{
 				if (atoi(argv[i+1]) < 1)
@@ -82,7 +86,8 @@ int main (int argc, char* argv[])
 				JV_ErrorHandle(JVERR_PW_MAX_LENGTH_NOT_EXIST);
 		}
 		else if (strcmp(argv[i], "-c") == 0)
-		{ // -c Charset.txt
+		{
+			// -c Charset.txt
 			if (i+1 != argc && scanfile(argv[i+1]))
 			{
 				arg_charset = TRUE;
@@ -92,7 +97,8 @@ int main (int argc, char* argv[])
 				JV_ErrorHandle(JVERR_PW_CHARSET_NOT_EXIST);
 		}
 		else if (strcmp(argv[i], "-i") == 0)
-		{ // -i pwpigeon
+		{
+			// -i pwpigeon
 			if (i+1 != argc)
 			{
 				arg_initial = TRUE;
@@ -102,7 +108,8 @@ int main (int argc, char* argv[])
 				JV_ErrorHandle(JVERR_PW_INITIAL_NOT_EXIST);
 		}
 		else if (strcmp(argv[i], "-p") == 0)
-		{ // -i pwpigeon
+		{
+			// -i pwpigeon
 			if (i+1 != argc)
 			{
 				int print_interval = atoi(argv[i+1]);
@@ -116,11 +123,13 @@ int main (int argc, char* argv[])
 				JV_ErrorHandle(JVERR_PRINT_INTERVAL_NOT_EXIST);
 		}
 		else if (strcmp(argv[i], "-cl") == 0)
-		{ // -cl, for OpenCL
+		{
+			// -cl, for OpenCL
 			bforce.use_opencl = TRUE;
 		}
 		else if (!strcmp(argv[i], "--help") && !strcmp(argv[i], "-h") && !strcmp(argv[i], "/?"))
-		{ // Help Message
+		{
+			// Help Message
 			JV_Help();
 			return 0;
 		}
@@ -167,8 +176,8 @@ int main (int argc, char* argv[])
 	SetStartTime(&bforce);
 
 // Print Session Info
-    NBF_PrintEnvInfo(&bforce);
-    putchar('\n');
+	NBF_PrintEnvInfo(&bforce);
+	putchar('\n');
 	putchar('\n');
 
 // Start BruteForce!
@@ -225,5 +234,5 @@ void JV_Help ()
 			"        Usage : -p <PrintInterval>\n"
 			"-cl : Use OpenCL\n"
 			"        If OpenCL is enabled, cpu multithreading will be disabled.\n"
-            "        OpenCL functionality is not available now.\n");
+			"        OpenCL functionality is not available now.\n");
 }
